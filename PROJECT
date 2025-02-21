@@ -1,0 +1,885 @@
+-Controller
+1.DriverController
+package com.rest.springapp.Controller;
+import com.rest.springapp.entities.Driver;
+import com.rest.springapp.Service.DriverService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/drivers")
+public class DriverController {
+    @Autowired
+    private DriverService driverService;
+
+    @PostMapping
+    public ResponseEntity<Driver> addDriver(@RequestBody Driver driver) {
+        return new ResponseEntity<>(driverService.addDriver(driver), HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Driver>> getAllDrivers() {
+        return new ResponseEntity<>(driverService.getAllDrivers(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Driver> getDriverById(@PathVariable int id) {
+        return driverService.getDriverById(id)
+                .map(driver -> new ResponseEntity<>(driver, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Driver> updateDriver(@PathVariable int id, @RequestBody Driver newDriver) {
+        return new ResponseEntity<>(driverService.updateDriver(id, newDriver), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteDriver(@PathVariable int id) {
+        driverService.deleteDriver(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    @GetMapping("/paginated")
+    public ResponseEntity<Page<Driver>> getPaginatedDrivers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return new ResponseEntity<>(driverService.getDriversWithPagination(pageable), HttpStatus.OK);
+    }
+    @GetMapping("/search")
+    public ResponseEntity<Page<Driver>> searchDrivers(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return new ResponseEntity<>(driverService.searchDrivers(keyword, pageable), HttpStatus.OK);
+    }
+}
+2.RouteController
+package com.rest.springapp.Controller;
+
+import com.rest.springapp.entities.Route;
+import com.rest.springapp.Service.RouteService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/routes")
+public class RouteController {
+    @Autowired
+    private RouteService routeService;
+
+    @PostMapping
+    public ResponseEntity<Route> addRoute(@RequestBody Route route) {
+        return new ResponseEntity<>(routeService.addRoute(route), HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Route>> getAllRoutes() {
+        return new ResponseEntity<>(routeService.getAllRoutes(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Route> getRouteById(@PathVariable int id) {
+        return routeService.getRouteById(id)
+                .map(route -> new ResponseEntity<>(route, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Route> updateRoute(@PathVariable int id, @RequestBody Route newRoute) {
+        return new ResponseEntity<>(routeService.updateRoute(id, newRoute), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteRoute(@PathVariable int id) {
+        routeService.deleteRoute(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+   
+    @GetMapping("/paginated")
+    public ResponseEntity<Page<Route>> getPaginatedRoutes(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return new ResponseEntity<>(routeService.getRoutesWithPagination(pageable), HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<Page<Route>> getAllRoutesWithPagination(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return new ResponseEntity<>(routeService.getAllRoutesWithPagination(pageable), HttpStatus.OK);
+    }
+    @GetMapping("/search")
+    public ResponseEntity<Page<Route>> searchRoutes(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return new ResponseEntity<>(routeService.searchRoutes(keyword, pageable), HttpStatus.OK);
+    }
+}
+3.UserController
+package com.rest.springapp.Controller;
+
+import com.rest.springapp.entities.User;
+import com.rest.springapp.Service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/users")
+public class UserController {
+    @Autowired
+    private UserService userService;
+
+    @PostMapping
+    public ResponseEntity<User> addUser(@RequestBody User user) {
+        return new ResponseEntity<>(userService.addUser(user), HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable int id) {
+        return userService.getUserById(id)
+                .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody User newUser) {
+        return new ResponseEntity<>(userService.updateUser(id, newUser), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable int id) {
+        userService.deleteUser(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // Get users with pagination and sorting
+    @GetMapping("/paginated")
+    public ResponseEntity<Page<User>> getPaginatedUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+        
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return new ResponseEntity<>(userService.getUsersWithPagination(pageable), HttpStatus.OK);
+    }
+
+    // Search users by role with pagination
+    @GetMapping("/search")
+    public ResponseEntity<Page<User>> searchUsersByRole(
+            @RequestParam String role,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return new ResponseEntity<>(userService.searchUsersByRole(role, pageable), HttpStatus.OK);
+    }
+}
+4.WasteBinController
+package com.rest.springapp.Controller;
+
+import com.rest.springapp.entities.WasteBin;
+import com.rest.springapp.Service.WasteBinService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/wastebins")
+public class WasteBinController {
+    @Autowired
+    private WasteBinService wasteBinService;
+
+    @PostMapping
+    public ResponseEntity<WasteBin> addWasteBin(@RequestBody WasteBin wasteBin) {
+        return new ResponseEntity<>(wasteBinService.addWasteBin(wasteBin), HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<WasteBin>> getAllWasteBins() {
+        return new ResponseEntity<>(wasteBinService.getAllWasteBins(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<WasteBin> getWasteBinById(@PathVariable int id) {
+        return wasteBinService.getWasteBinById(id)
+                .map(wasteBin -> new ResponseEntity<>(wasteBin, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<WasteBin> updateWasteBin(@PathVariable int id, @RequestBody WasteBin newWasteBin) {
+        return new ResponseEntity<>(wasteBinService.updateWasteBin(id, newWasteBin), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteWasteBin(@PathVariable int id) {
+        wasteBinService.deleteWasteBin(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // Get waste bins with pagination and sorting
+    @GetMapping("/paginated")
+    public ResponseEntity<Page<WasteBin>> getPaginatedWasteBins(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return new ResponseEntity<>(wasteBinService.getWasteBinsWithPagination(pageable), HttpStatus.OK);
+    }
+
+    // Search waste bins by type with pagination
+    @GetMapping("/search/type")
+    public ResponseEntity<Page<WasteBin>> searchWasteBinsByType(
+            @RequestParam String type,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return new ResponseEntity<>(wasteBinService.searchWasteBinsByType(type, pageable), HttpStatus.OK);
+    }
+
+    // Search waste bins by status with pagination
+    @GetMapping("/search/status")
+    public ResponseEntity<Page<WasteBin>> searchWasteBinsByStatus(
+            @RequestParam String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return new ResponseEntity<>(wasteBinService.searchWasteBinsByStatus(status, pageable), HttpStatus.OK);
+    }
+}
+
+-Entities
+1.Driver.java
+package com.rest.springapp.entities;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "drivers")
+public class Driver {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    @Column(nullable = false, length = 20, unique = true)
+    private String licenseNumber;
+
+    // Default Constructor
+    public Driver() {}
+
+    // Parameterized Constructor
+    public Driver(String name, String licenseNumber) {
+        this.name = name;
+        this.licenseNumber = licenseNumber;
+    }
+
+    // Getters and Setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLicenseNumber() {
+        return licenseNumber;
+    }
+
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
+    }
+}
+2.Route.java
+package com.rest.springapp.entities;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "routes")
+public class Route {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    @Column(nullable = false, length = 200)
+    private String location;
+
+    // Default Constructor
+    public Route() {}
+
+    // Parameterized Constructor
+    public Route(String name, String location) {
+        this.name = name;
+        this.location = location;
+    }
+
+    // Getters and Setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+}
+3.User.java
+package com.rest.springapp.entities;
+
+import jakarta.persistence.*;
+
+@Entity
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    private String name;
+    private String role;
+
+    @Version  // This enables Hibernate's optimistic locking mechanism
+    private int version;
+
+    // Constructors
+    public User() {}
+
+    public User(int id, String name, String role) {
+        this.id = id;
+        this.name = name;
+        this.role = role;
+    }
+
+    // Getters and Setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+}
+4.WasteBin.java
+package com.rest.springapp.entities;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "waste_bin")
+public class WasteBin {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-increment ID in MySQL
+    private int id;
+
+    private String type;
+    private String location;
+    private String status;
+
+    // Default Constructor
+    public WasteBin() {}
+
+    // Parameterized Constructor
+    public WasteBin(int id, String type, String location, String status) {
+        this.id = id;
+        this.type = type;
+        this.location = location;
+        this.status = status;
+    }
+
+    // Getters and Setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+}
+
+-Repository
+1.DriverRepository
+package com.rest.springapp.repository;
+
+import com.rest.springapp.entities.Driver;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface DriverRepository extends JpaRepository<Driver, Integer> {
+
+   
+    Page<Driver> findAll(Pageable pageable);
+
+    
+    @Query("SELECT d FROM Driver d WHERE LOWER(d.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    Page<Driver> searchDriversByName(String keyword, Pageable pageable);
+}
+2.RouteRepository
+package com.rest.springapp.repository;
+
+import com.rest.springapp.entities.Route;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface RouteRepository extends JpaRepository<Route, Integer> {
+
+    
+    Page<Route> findAll(Pageable pageable);
+
+   
+    @Query("SELECT r FROM Route r WHERE LOWER(r.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    Page<Route> searchRoutesByName(String keyword, Pageable pageable);
+}
+3.UserRepository
+package com.rest.springapp.repository;
+
+import com.rest.springapp.entities.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Integer> {
+
+    // JPQL query to find users by role
+    @Query("SELECT u FROM User u WHERE u.role LIKE %:role%")
+    Page<User> searchUsersByRole(String role, Pageable pageable);
+}
+4.WasteBinRepository
+package com.rest.springapp.repository;
+
+import com.rest.springapp.entities.WasteBin;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface WasteBinRepository extends JpaRepository<WasteBin, Integer> {
+
+    // JPQL query to find WasteBins by type
+    @Query("SELECT w FROM WasteBin w WHERE w.type LIKE %:type%")
+    Page<WasteBin> findWasteBinsByType(String type, Pageable pageable);
+
+    // JPQL query to find WasteBins by status
+    @Query("SELECT w FROM WasteBin w WHERE w.status = :status")
+    Page<WasteBin> findWasteBinsByStatus(String status, Pageable pageable);
+}
+
+-Service
+1.DriverService
+package com.rest.springapp.Service;
+
+import com.rest.springapp.entities.Driver;
+import com.rest.springapp.repository.DriverRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class DriverService {
+    @Autowired
+    private DriverRepository driverRepository;
+
+    public Driver addDriver(Driver driver) {
+        return driverRepository.save(driver);
+    }
+
+    public List<Driver> getAllDrivers() {
+        return driverRepository.findAll();
+    }
+
+    public Optional<Driver> getDriverById(int id) {
+        return driverRepository.findById(id);
+    }
+
+    public Driver updateDriver(int id, Driver newDriver) {
+        return driverRepository.findById(id)
+                .map(driver -> {
+                    driver.setName(newDriver.getName());
+                    driver.setLicenseNumber(newDriver.getLicenseNumber());
+                    return driverRepository.save(driver);
+                })
+                .orElseThrow(() -> new RuntimeException("Driver not found with id " + id));
+    }
+
+    public void deleteDriver(int id) {
+        driverRepository.deleteById(id);
+    }
+
+   
+    public Page<Driver> getDriversWithPagination(Pageable pageable) {
+        return driverRepository.findAll(pageable);
+    }
+
+   
+    public Page<Driver> searchDrivers(String keyword, Pageable pageable) {
+        return driverRepository.searchDriversByName(keyword, pageable);
+    }
+}
+2.RouteService
+package com.rest.springapp.Service;
+
+import com.rest.springapp.entities.Route;
+import com.rest.springapp.repository.RouteRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class RouteService {
+    @Autowired
+    private RouteRepository routeRepository;
+
+    public Route addRoute(Route route) {
+        return routeRepository.save(route);
+    }
+
+    public List<Route> getAllRoutes() {
+        return routeRepository.findAll();
+    }
+
+    public Optional<Route> getRouteById(int id) {
+        return routeRepository.findById(id);
+    }
+
+    public Route updateRoute(int id, Route newRoute) {
+        return routeRepository.findById(id)
+                .map(route -> {
+                    route.setName(newRoute.getName());
+                    route.setLocation(newRoute.getLocation());
+                    return routeRepository.save(route);
+                })
+                .orElseThrow(() -> new RuntimeException("Route not found with id " + id));
+    }
+
+    public void deleteRoute(int id) {
+        routeRepository.deleteById(id);
+    }
+
+    
+    public Page<Route> getRoutesWithPagination(Pageable pageable) {
+        return routeRepository.findAll(pageable);
+    }
+
+   
+    public Page<Route> getAllRoutesWithPagination(Pageable pageable) {
+        return routeRepository.findAll(pageable);
+    }
+
+    
+    public Page<Route> searchRoutes(String keyword, Pageable pageable) {
+        return routeRepository.searchRoutesByName(keyword, pageable);
+    }
+}
+3.UserService
+package com.rest.springapp.Service;
+
+import com.rest.springapp.entities.User;
+import com.rest.springapp.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class UserService {
+    @Autowired
+    private UserRepository repository;
+
+    public User addUser(User user) {
+        return repository.save(user);
+    }
+
+    public List<User> getAllUsers() {
+        return repository.findAll();
+    }
+
+    public Optional<User> getUserById(int id) {
+        return repository.findById(id);
+    }
+
+    public User updateUser(int id, User newUser) {
+        return repository.findById(id)
+            .map(existingUser -> {
+                existingUser.setName(newUser.getName());
+                existingUser.setRole(newUser.getRole());
+                return repository.save(existingUser);
+            }).orElseThrow(() -> new RuntimeException("User not found with id " + id));
+    }
+
+    public void deleteUser(int id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+        } else {
+            throw new RuntimeException("User not found with id " + id);
+        }
+    }
+
+    // Get users with pagination and sorting
+    public Page<User> getUsersWithPagination(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
+
+    // Search users by role with pagination
+    public Page<User> searchUsersByRole(String role, Pageable pageable) {
+        return repository.searchUsersByRole(role, pageable);
+    }
+}
+4.WasteBinService
+package com.rest.springapp.Service;
+
+import com.rest.springapp.entities.WasteBin;
+import com.rest.springapp.repository.WasteBinRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class WasteBinService {
+    @Autowired
+    private WasteBinRepository repository;
+
+    public WasteBin addWasteBin(WasteBin wasteBin) {
+        return repository.save(wasteBin);
+    }
+
+    public List<WasteBin> getAllWasteBins() {
+        return repository.findAll();
+    }
+
+    public Optional<WasteBin> getWasteBinById(int id) {
+        return repository.findById(id);
+    }
+
+    public WasteBin updateWasteBin(int id, WasteBin newWasteBin) {
+        return repository.findById(id)
+            .map(existingWasteBin -> {
+                existingWasteBin.setType(newWasteBin.getType());
+                existingWasteBin.setLocation(newWasteBin.getLocation());
+                existingWasteBin.setStatus(newWasteBin.getStatus());
+                return repository.save(existingWasteBin);
+            }).orElseThrow(() -> new RuntimeException("WasteBin not found with id " + id));
+    }
+
+    public void deleteWasteBin(int id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+        } else {
+            throw new RuntimeException("WasteBin not found with id " + id);
+        }
+    }
+
+    // Get waste bins with pagination and sorting
+    public Page<WasteBin> getWasteBinsWithPagination(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
+
+    // Search waste bins by type with pagination
+    public Page<WasteBin> searchWasteBinsByType(String type, Pageable pageable) {
+        return repository.findWasteBinsByType(type, pageable);
+    }
+
+    // Search waste bins by status with pagination
+    public Page<WasteBin> searchWasteBinsByStatus(String status, Pageable pageable) {
+        return repository.findWasteBinsByStatus(status, pageable);
+    }
+}
+5.SpringApplication.java
+package com.rest.springapp;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SpringappApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringappApplication.class, args);
+	}
+}
+
+
